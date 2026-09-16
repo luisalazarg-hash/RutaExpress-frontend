@@ -1,0 +1,19 @@
+.FirstView {
+  background-image: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('./assets/fondo.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-section{
+  flex: 1;
+}
+
+.navbar-dark .nav-link:hover {
+  color: var(--bs-primary) !important;
+}
