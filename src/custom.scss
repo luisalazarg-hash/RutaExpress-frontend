@@ -1,6 +1,66 @@
-$primary:   #b91c1c; 
-$secondary: #966d4f; 
-$success:   #15803d;
-$danger:    #991b1b; 
+// ========================
+// Brand
+// ========================
 
+$brand-red: #b91c1c;
+$brand-brown: #966d4f;
+
+$red-50: #fef2f2;
+$red-100: #fee2e2;
+$red-200: #fecaca;
+$red-300: #fca5a5;
+$red-400: #f87171;
+$red-500: #ef4444;
+$red-600: #dc2626;
+$red-700: #b91c1c;
+$red-800: #991b1b;
+$red-900: #7f1d1d;
+
+
+// ========================
+// Semantic
+// ========================
+
+$primary: $brand-red;
+$secondary: $brand-brown;
+
+$success: #15803d;
+$danger: #991b1b;
+$warning: #d97706;
+$info: #0369a1;
+
+$light: #faf7f5;
+$dark: #292524;
+
+
+// ========================
+// Bootstrap
+// ========================
 @import "bootstrap/scss/bootstrap";
+
+// ========================
+// Red utilities
+// ========================
+
+$reds: (
+    50: $red-50,
+    100: $red-100,
+    200: $red-200,
+    300: $red-300,
+    400: $red-400,
+    500: $red-500,
+    600: $red-600,
+    700: $red-700,
+    800: $red-800,
+    900: $red-900
+);
+
+@each $level, $color in $reds {
+    .bg-red-#{$level} {
+        background-color: $color !important;
+    }
+
+    .text-red-#{$level} {
+        color: $color !important;
+    }
+}

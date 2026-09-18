@@ -1,5 +1,6 @@
 import React from 'react'
 import { NavBar } from '../components/NavBar'
+import { AboutUs } from '../components/AboutUs'
 
 export const HomePage = () => {
   return (
@@ -26,6 +27,9 @@ export const HomePage = () => {
             </div>
           </div>
         </header>
+      </div>
+      <div id='about' className='about-us d-flex justify-content-center align-items-center bg-red-50'>
+        <AboutUs />
       </div>
     </>
   )

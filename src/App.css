@@ -4,16 +4,66 @@
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  
+
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-.hero-section{
+.hero-section {
   flex: 1;
 }
 
 .navbar-dark .nav-link:hover {
   color: var(--bs-primary) !important;
+}
+
+.navbar {
+  transition: all 0.3s ease;
+}
+
+.navbar-hero {
+  background: transparent;
+}
+
+.navbar-hero .nav-link {
+  color: white;
+}
+
+.navbar-hero .nav-link:hover {
+  color: #b91c1c;
+}
+
+.navbar-scrolled {
+  background: rgba(41, 37, 36, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  justify-content: center;
+}
+
+.navbar-scrolled .nav-link {
+  color: white;
+  font-weight: 500;
+}
+
+.navbar-scrolled .nav-link:hover {
+  color: #b91c1c;
+}
+
+.navbar-nav-scrolled {
+  margin: 0 auto;
+}
+
+.about-us {
+  height: 100vh;
+}
+
+.logo {
+  max-width: 9rem;
 }
