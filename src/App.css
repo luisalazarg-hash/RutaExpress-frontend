@@ -26,12 +26,16 @@
   background: transparent;
 }
 
+.navbar-hero .nav-link {
+  color: white;
+}
+
 .navbar-hero .nav-link:hover {
   color: #b91c1c;
 }
 
 .navbar-scrolled {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(41, 37, 36, 0.45);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 
@@ -50,6 +54,10 @@
 
 .navbar-scrolled .nav-link:hover {
   color: #b91c1c;
+}
+
+.navbar-nav-scrolled {
+  margin: 0 auto;
 }
 
 .about-us {

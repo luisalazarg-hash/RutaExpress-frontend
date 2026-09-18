@@ -31,7 +31,7 @@ export const NavBar = () => {
 						</div>
 					)}
 
-					<ul className="navbar-nav ms-auto flex-row gap-4">
+					<ul className={`navbar-nav flex-row gap-4 ${scrolled ? 'navbar-nav-scrolled' : 'ms-auto'}`}>
 						<li className="nav-item">
 							<a className="nav-link" href="#up">Inicio</a>
 						</li>
