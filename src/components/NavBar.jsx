@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../App.css'
 import logo from '../assets/logo.png'
+import { Link } from 'react-router-dom'
 
 export const NavBar = () => {
 
@@ -33,19 +34,15 @@ export const NavBar = () => {
 
 					<ul className={`navbar-nav flex-row gap-4 ${scrolled ? 'navbar-nav-scrolled' : 'ms-auto'}`}>
 						<li className="nav-item">
-							<a className="nav-link" href="#up">Inicio</a>
+							<Link className="nav-link" to="/">Inicio</Link>
 						</li>
 
 						<li className="nav-item">
-							<a className="nav-link" href="#about">Nosotros</a>
+							<a className="nav-link" href="#about">Sobre Nosotros</a>
 						</li>
 
 						<li className="nav-item">
-							<a className="nav-link" href="#services">Servicios</a>
-						</li>
-
-						<li className="nav-item">
-							<a className="nav-link" href="#contact">Contacto</a>
+							<a className="nav-link" href="#services">Iniciar Sesión</a>
 						</li>
 					</ul>
 
