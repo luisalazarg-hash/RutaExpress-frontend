@@ -17,3 +17,7 @@
 .navbar-dark .nav-link:hover {
   color: var(--bs-primary) !important;
 }
+
+.about-us {
+  height: 100vh;
+}
