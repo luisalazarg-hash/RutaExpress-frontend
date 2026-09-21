@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>RutaExpress - Autenticando</title>
+</head>
+<body>
+  <p>Procesando autenticación...</p>
+
+  <script type="module">
+    import { broadcastResponseToMainFrame } from "@azure/msal-browser/redirect-bridge"
+
+    broadcastResponseToMainFrame().catch((error) => {
+      console.error("Error procesando la autenticación:", error)
+    })
+  </script>
+</body>
+</html>
