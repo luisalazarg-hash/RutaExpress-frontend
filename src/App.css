@@ -67,3 +67,87 @@
 .logo {
   max-width: 9rem;
 }
+
+/* LOGIN PAGE */
+
+/* Contenedor principal */
+.login-page {
+  font-family: Arial, sans-serif;
+}
+
+/* Ancho máximo de la tarjeta */
+.login-container {
+  max-width: 384px;
+}
+
+/* Tarjetas de fondo */
+.login-card-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 1.5rem;
+}
+
+/* Rotaciones */
+.rotate-left {
+  transform: rotate(-6deg);
+}
+
+.rotate-right {
+  transform: rotate(6deg);
+}
+
+/* Tarjeta principal */
+.login-card {
+  z-index: 1;
+  border-radius: 1.5rem !important;
+}
+
+/* Inputs */
+.login-input {
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background-color: #f3f4f6;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.3s ease;
+}
+
+.login-input:hover,
+.login-input:focus {
+  background-color: #dbeafe;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  outline: none;
+}
+
+/* Botones */
+.login-btn {
+  transition: all 0.5s ease;
+}
+
+.login-btn:hover {
+  transform: scale(1.05);
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Enlace de registro */
+.login-link {
+  display: inline-block;
+  transition: transform 0.5s ease;
+}
+
+.login-link:hover {
+  transform: scale(1.05);
+}
+
+/* Adaptación para móviles */
+@media (max-width: 576px) {
+  .login-container {
+    max-width: 90%;
+  }
+
+  .login-card {
+    padding: 1.5rem !important;
+  }
+}
