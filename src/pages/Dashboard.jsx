@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useMsal } from '@azure/msal-react'
 import './Dashboard.css'
+import { DashboardNav } from '../components/DashboardNav'
 
 const STATUS_COLORS = { CREADO: '#6c757d', ACEPTADO: '#0d6efd', EN_BODEGA: '#198754', EN_RUTA: '#fd7e14', ENTREGADO: '#20c997', CANCELADO: '#dc3545' }
 const ROLE_LABELS = { ADMIN: 'Administrador', OPERADOR: 'Despachador', CLIENTE: 'Cliente' }
@@ -60,6 +61,7 @@ export const Dashboard = () => {
   return (
     <div className="dashboard-page">
       <div className="dashboard-shell">
+        <DashboardNav />
         <header className="dashboard-header">
           <div>
             <p className="dashboard-eyebrow">Panel de control</p>
