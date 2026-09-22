@@ -1,8 +1,9 @@
-import './App.css'
-import { HomePage } from './pages/HomePage'
 import { Route, Routes } from 'react-router-dom'
+
+import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { Dashboard } from './pages/Dashboard'
+
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { ModulePage } from './pages/ModulePage'
 
@@ -12,8 +13,10 @@ const protectedModule = (title, description) => (
   </ProtectedRoute>
 )
 
-function App() {
+import { PublicLayout } from './layouts/PublicLayout'
+import { AppLayout } from './layouts/AppLayout'
 
+function App() {
   return (
     <>
       <Routes>
