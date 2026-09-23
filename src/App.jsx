@@ -4,6 +4,7 @@ import { LoginPage } from './pages/LoginPage'
 import { Dashboard } from './pages/Dashboard'
 import { ModulePage } from './pages/ModulePage'
 import { ProtectedRoute } from './routes/ProtectedRoute'
+import { AuthTestPage } from './pages/AuthTestPage'
 
 const protectedModule = (title, description) => (
   <ProtectedRoute>
@@ -29,6 +30,7 @@ function App() {
       <Route path="/envios" element={protectedModule('Envíos', 'Consulta y gestiona el estado de los envíos.')} />
       <Route path="/notificaciones" element={protectedModule('Notificaciones', 'Revisa las comunicaciones generadas por la operación.')} />
       <Route path="/reportes" element={protectedModule('Reportes', 'Accede a los informes operativos de RutaExpress.')} />
+      <Route path="/auth-test" element={<AuthTestPage />} />
     </Routes>
   )
 }
