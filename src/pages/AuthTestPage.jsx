@@ -50,8 +50,40 @@ export const AuthTestPage = () => {
 
       if (response.accessToken) {
 
+        const payload = JSON.parse(
+          atob(
+            response.accessToken
+              .split('.')[1]
+              .replace(/-/g, '+')
+              .replace(/_/g, '/')
+          )
+        )
+
+        console.log('ACCESS TOKEN aud:', payload.aud)
+        console.log('ACCESS TOKEN iss:', payload.iss)
+        console.log('ACCESS TOKEN tid:', payload.tid)
+        console.log('ACCESS TOKEN scp:', payload.scp)
+
+        const apiResponse = await fetch(
+          'http://localhost:8088/api/auth/test',
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${response.accessToken}`,
+            },
+          }
+        )
+
+        if (!apiResponse.ok) {
+          throw new Error(
+            `ms-auth respondió con HTTP ${apiResponse.status}`
+          )
+        }
+
+        const data = await apiResponse.json()
+
         setResultado(
-          'Access token obtenido correctamente para RutaExpress-API.'
+          `${data.mensaje} | Autenticado: ${data.autenticado}`
         )
 
       } else {
