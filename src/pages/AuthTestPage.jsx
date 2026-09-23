@@ -1,135 +1,96 @@
-import { useState } from 'react'
+import { useAuth } from '../auth/AuthContext'
 import { useMsal } from '@azure/msal-react'
-import { InteractionRequiredAuthError } from '@azure/msal-browser'
-
 import { apiTokenRequest } from '../auth/authRequest'
 
-export const AuthTestPage = () => {
+export function AuthTestPage() {
+
+  const {
+    isAuthenticated,
+    usuario,
+    cargandoUsuario,
+    errorUsuario,
+  } = useAuth()
+
+  if (cargandoUsuario) {
+    return <p>Cargando usuario...</p>
+  }
 
   const { instance, accounts } = useMsal()
 
-  const [resultado, setResultado] = useState('')
-  const [cargando, setCargando] = useState(false)
-
-  const probarToken = async () => {
-
-    setCargando(true)
-    setResultado('')
+  async function probarUsuarios() {
 
     try {
 
-      const account = instance.getActiveAccount() ?? accounts[0]
+      const account =
+        instance.getActiveAccount() ?? accounts[0]
 
-      if (!account) {
-        setResultado('No existe una cuenta autenticada.')
-        return
-      }
+      const tokenResponse =
+        await instance.acquireTokenSilent({
+          ...apiTokenRequest,
+          account,
+        })
 
-      const request = {
-        ...apiTokenRequest,
-        account,
-      }
-
-      let response
-
-      try {
-
-        response = await instance.acquireTokenSilent(request)
-
-      } catch (error) {
-
-        if (error instanceof InteractionRequiredAuthError) {
-
-          await instance.acquireTokenRedirect(request)
-          return
-
+      const response = await fetch(
+        'http://localhost:8088/api/usuarios',
+        {
+          headers: {
+            Authorization:
+              `Bearer ${tokenResponse.accessToken}`,
+          },
         }
+      )
 
-        throw error
-      }
+      const data = await response.json()
 
-      if (response.accessToken) {
-
-        const payload = JSON.parse(
-          atob(
-            response.accessToken
-              .split('.')[1]
-              .replace(/-/g, '+')
-              .replace(/_/g, '/')
-          )
-        )
-
-        console.log('ACCESS TOKEN aud:', payload.aud)
-        console.log('ACCESS TOKEN iss:', payload.iss)
-        console.log('ACCESS TOKEN tid:', payload.tid)
-        console.log('ACCESS TOKEN scp:', payload.scp)
-
-        const apiResponse = await fetch(
-          'http://localhost:8088/api/auth/test',
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${response.accessToken}`,
-            },
-          }
-        )
-
-        if (!apiResponse.ok) {
-          throw new Error(
-            `ms-auth respondió con HTTP ${apiResponse.status}`
-          )
-        }
-
-        const data = await apiResponse.json()
-
-        setResultado(
-          `${data.mensaje} | Autenticado: ${data.autenticado}`
-        )
-
-      } else {
-
-        setResultado('Microsoft no devolvió un access token.')
-
-      }
+      console.log(
+        'GET /api/usuarios:',
+        response.status,
+        data
+      )
 
     } catch (error) {
 
-      console.error('Error al obtener access token:', error)
-
-      setResultado(
-        `Error: ${error.message}`
+      console.error(
+        'Error probando /api/usuarios:',
+        error
       )
-
-    } finally {
-
-      setCargando(false)
-
     }
   }
 
   return (
     <div className="container py-5">
 
-      <h1>Prueba de autenticación API</h1>
+      <h1>Estado de autenticación</h1>
 
       <p>
-        Comprobaremos si Microsoft entrega un access token
-        para RutaExpress-API.
+        Microsoft:
+        {' '}
+        {isAuthenticated
+          ? 'Autenticado'
+          : 'No autenticado'}
       </p>
+
+      {usuario && (
+        <>
+          <p>Usuario: {usuario.nombre}</p>
+          <p>Email: {usuario.email}</p>
+          <p>Rol: {usuario.rol}</p>
+          <p>Estado: {usuario.estado}</p>
+        </>
+      )}
+
+      {errorUsuario && (
+        <div className="alert alert-danger">
+          {errorUsuario}
+        </div>
+      )}
 
       <button
         className="btn btn-primary"
-        onClick={probarToken}
-        disabled={cargando}
+        onClick={probarUsuarios}
       >
-        {cargando ? 'Solicitando token...' : 'Obtener access token'}
+        Probar GET /api/usuarios
       </button>
-
-      {resultado && (
-        <div className="alert alert-info mt-4">
-          {resultado}
-        </div>
-      )}
 
     </div>
   )
