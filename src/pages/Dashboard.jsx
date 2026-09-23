@@ -27,7 +27,7 @@ export const Dashboard = () => {
       try {
         const scopes = [import.meta.env.VITE_AZURE_API_SCOPE].filter(Boolean)
         const token = await instance.acquireTokenSilent({ scopes, account })
-        const response = await fetch(`${import.meta.env.VITE_API_URL ?? 'http://localhost:8081'}/api/shipments`, { headers: { Authorization: `Bearer ${token.accessToken}` } })
+        const response = await fetch(`${import.meta.env.VITE_API_URL ?? 'http://localhost:8080'}/api/shipments`, { headers: { Authorization: `Bearer ${token.accessToken}` } })
         if (!response.ok) throw new Error(`La API respondió ${response.status}`)
         const data = await response.json()
         if (active) setShipments(Array.isArray(data) ? data : [])
