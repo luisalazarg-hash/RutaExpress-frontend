@@ -65,7 +65,7 @@ export const AuthTestPage = () => {
         console.log('ACCESS TOKEN scp:', payload.scp)
 
         const apiResponse = await fetch(
-          'http://localhost:8088/api/auth/test',
+          'http://localhost:8088/api/auth/me',
           {
             method: 'GET',
             headers: {
@@ -82,8 +82,10 @@ export const AuthTestPage = () => {
 
         const data = await apiResponse.json()
 
+        console.log('USUARIO RUTAEXPRESS:', data)
+
         setResultado(
-          `${data.mensaje} | Autenticado: ${data.autenticado}`
+          `Usuario: ${data.nombre} | Rol: ${data.rol} | Estado: ${data.estado}`
         )
 
       } else {
