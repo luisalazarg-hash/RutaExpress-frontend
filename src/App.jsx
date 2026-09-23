@@ -5,6 +5,7 @@ import { Dashboard } from './pages/Dashboard'
 import { ModulePage } from './pages/ModulePage'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { AuthTestPage } from './pages/AuthTestPage'
+import {UsuariosPage} from './pages/UsuariosPage'
 
 const protectedModule = (title, description) => (
   <ProtectedRoute>
@@ -12,19 +13,13 @@ const protectedModule = (title, description) => (
   </ProtectedRoute>
 )
 
-function App() {
+export function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/usuarios" element={<ProtectedRoute><UsuariosPage /></ProtectedRoute>} />
       <Route path="/auditoria" element={protectedModule('Auditoría', 'Consulta el historial de eventos y cambios de los envíos.')} />
       <Route path="/catalogo" element={protectedModule('Catálogo', 'Administra los servicios disponibles para tus envíos.')} />
       <Route path="/envios" element={protectedModule('Envíos', 'Consulta y gestiona el estado de los envíos.')} />
