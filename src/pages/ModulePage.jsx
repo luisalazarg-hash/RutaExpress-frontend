@@ -60,7 +60,6 @@ export const ModulePage = ({ title, description }) => {
   return (
     <main className="dashboard-page">
       <div className="dashboard-shell">
-        <DashboardNav />
         <section className="module-page-content">
           <p className="dashboard-eyebrow">Módulo RutaExpress</p>
           <h1>{title}</h1>
