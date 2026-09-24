@@ -27,6 +27,9 @@ export const ModulePage = ({ title, description }) => {
   useEffect(() => {
     let active = true
     async function loadModule() {
+      setLoading(true)
+      setError('')
+      setRecords([])
       try {
         const account = instance.getActiveAccount() ?? accounts[0]
         const request = createApiClient(instance, account)
