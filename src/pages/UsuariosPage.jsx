@@ -48,14 +48,16 @@ export function UsuariosPage() {
     }, [])
 
     if (cargando) {
-        return <div className="container py-5">Cargando usuarios...</div>
+        return <><div className='dashboard-page'><div className="container py-5">Cargando usuarios...</div></div></>
     }
 
     if (error) {
         return (
-            <div className="container py-5">
-                <div className="alert alert-danger">
-                    {error}
+            <div className='dashboard-page'>
+                <div className="container py-5">
+                    <div className="alert alert-danger">
+                        {error}
+                    </div>
                 </div>
             </div>
         )
@@ -78,66 +80,68 @@ export function UsuariosPage() {
     }
 
     return (
-        <div className="container py-5">
-            <h2 className="mb-4">Gestión de Usuarios</h2>
+        <div className='dashboard-page'>
+            <div className="container py-5">
+                <h2 className="mb-4">Gestión de Usuarios</h2>
 
-            <button className="btn btn-primary mb-3" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
-                Crear usuario
-            </button>
+                <button className="btn btn-primary mb-3" onClick={() => setMostrarFormulario(!mostrarFormulario)}>
+                    Crear usuario
+                </button>
 
-            {mostrarFormulario && (
-                <form onSubmit={crearUsuario} className="card card-body mb-4">
-                    <input className="form-control mb-2" placeholder="Nombre" value={nuevoUsuario.nombre}
-                        onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, nombre: e.target.value })} required />
+                {mostrarFormulario && (
+                    <form onSubmit={crearUsuario} className="card card-body mb-4">
+                        <input className="form-control mb-2" placeholder="Nombre" value={nuevoUsuario.nombre}
+                            onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, nombre: e.target.value })} required />
 
-                    <input className="form-control mb-2" type="email" placeholder="Correo" value={nuevoUsuario.email}
-                        onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, email: e.target.value })} required />
+                        <input className="form-control mb-2" type="email" placeholder="Correo" value={nuevoUsuario.email}
+                            onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, email: e.target.value })} required />
 
-                    <select className="form-select mb-3" value={nuevoUsuario.rol}
-                        onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, rol: e.target.value })}>
-                        <option value="ADMIN">ADMIN</option>
-                    </select>
+                        <select className="form-select mb-3" value={nuevoUsuario.rol}
+                            onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, rol: e.target.value })}>
+                            <option value="ADMIN">ADMIN</option>
+                        </select>
 
-                    <button className="btn btn-success" type="submit">Guardar usuario</button>
-                </form>
-            )}
+                        <button className="btn btn-success" type="submit">Guardar usuario</button>
+                    </form>
+                )}
 
-            <div className="table-responsive">
-                <table className="table table-striped align-middle">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Correo</th>
-                            <th>Rol</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {usuarios.map((usuario) => (
-                            <tr key={usuario.id}>
-                                <td>{usuario.nombre}</td>
-                                <td>{usuario.email}</td>
-                                <td>{usuario.rol}</td>
-                                <td>{usuario.estado}</td>
-
-                                <td>
-                                    {usuario.rol !== 'ADMIN' && (
-                                        <button
-                                            className="btn btn-sm btn-primary"
-                                            onClick={() =>
-                                                cambiarRol(usuario.id, 'ADMIN')
-                                            }
-                                        >
-                                            Hacer ADMIN
-                                        </button>
-                                    )}
-                                </td>
+                <div className="table-responsive">
+                    <table className="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+
+                        <tbody>
+                            {usuarios.map((usuario) => (
+                                <tr key={usuario.id}>
+                                    <td>{usuario.nombre}</td>
+                                    <td>{usuario.email}</td>
+                                    <td>{usuario.rol}</td>
+                                    <td>{usuario.estado}</td>
+
+                                    <td>
+                                        {usuario.rol !== 'ADMIN' && (
+                                            <button
+                                                className="btn btn-sm btn-primary"
+                                                onClick={() =>
+                                                    cambiarRol(usuario.id, 'ADMIN')
+                                                }
+                                            >
+                                                Hacer ADMIN
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )

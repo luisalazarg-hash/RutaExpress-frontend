@@ -5,7 +5,18 @@
 }
 
 .dashboard-shell { max-width: 1280px; margin: 0 auto; padding: 40px 20px 60px; }
-.dashboard-nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 36px; padding: 14px 18px; background: rgba(255,255,255,.86); border: 1px solid rgba(15,23,42,.08); border-radius: 16px; box-shadow: 0 8px 20px rgba(15,23,42,.05); }
+.dashboard-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 0;
+  padding: 14px 18px;
+  background: rgba(255,255,255,.86);
+  border: 1px solid rgba(15,23,42,.08);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 4px 10px rgba(15,23,42,.04);
+}
 .dashboard-nav-brand { color: #b91c1c; font-size: 1.15rem; font-weight: 800; text-decoration: none; }
 .dashboard-nav-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
 .dashboard-nav-link { padding: 8px 10px; border-radius: 8px; color: #475569; font-size: .88rem; font-weight: 700; text-decoration: none; }

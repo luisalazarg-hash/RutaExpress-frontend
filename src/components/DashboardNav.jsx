@@ -6,6 +6,7 @@ const navigationItems = [
   { label: 'Envíos', path: '/envios' },
   { label: 'Notificaciones', path: '/notificaciones' },
   { label: 'Reportes', path: '/reportes' },
+  { label: 'Usuarios', path: '/usuarios' },
 ]
 
 export const DashboardNav = () => (

@@ -58,7 +58,6 @@ export const Dashboard = () => {
   return (
     <div className="dashboard-page">
       <div className="dashboard-shell">
-        <DashboardNav />
         <header className="dashboard-header">
           <div>
             <p className="dashboard-eyebrow">Panel de control</p>
