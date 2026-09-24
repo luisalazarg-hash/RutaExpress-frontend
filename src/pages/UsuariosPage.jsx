@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useMsal } from '@azure/msal-react'
-import { apiTokenRequest } from '../auth/authRequest'
+import { createApiClient } from '../api/apiClient'
 
 export function UsuariosPage() {
     const { instance, accounts } = useMsal()
@@ -12,42 +12,13 @@ export function UsuariosPage() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false)
     const [nuevoUsuario, setNuevoUsuario] = useState({ nombre: '', email: '', rol: 'ADMIN', empresaId: null })
 
-    async function obtenerToken() {
-        const account = instance.getActiveAccount() ?? accounts[0]
-
-        if (!account) {
-            throw new Error('No hay una cuenta autenticada')
-        }
-
-        const tokenResponse = await instance.acquireTokenSilent({
-            ...apiTokenRequest,
-            account,
-        })
-
-        return tokenResponse.accessToken
-    }
-
     async function cargarUsuarios() {
         try {
             setCargando(true)
             setError(null)
 
-            const token = await obtenerToken()
-
-            const response = await fetch(
-                'http://localhost:8088/api/usuarios',
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            )
-
-            if (!response.ok) {
-                throw new Error(`Error HTTP ${response.status}`)
-            }
-
-            const data = await response.json()
+            const account = instance.getActiveAccount() ?? accounts[0]
+            const data = await createApiClient(instance, account)('/api/usuarios')
             setUsuarios(data)
         } catch (error) {
             console.error(error)
@@ -59,26 +30,11 @@ export function UsuariosPage() {
 
     async function cambiarRol(id, rol) {
         try {
-            const token = await obtenerToken()
-
-            const response = await fetch(
-                `http://localhost:8088/api/usuarios/${id}/rol`,
-                {
-                    method: 'PATCH',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        rol,
-                        empresaId: null,
-                    }),
-                }
-            )
-
-            if (!response.ok) {
-                throw new Error(`Error HTTP ${response.status}`)
-            }
+            const account = instance.getActiveAccount() ?? accounts[0]
+            await createApiClient(instance, account)(`/api/usuarios/${id}/rol`, {
+                method: 'PATCH',
+                body: JSON.stringify({ rol, empresaId: null }),
+            })
 
             await cargarUsuarios()
         } catch (error) {
@@ -108,13 +64,11 @@ export function UsuariosPage() {
     async function crearUsuario(e) {
         e.preventDefault()
         try {
-            const token = await obtenerToken()
-            const response = await fetch('http://localhost:8088/api/usuarios', {
+            const account = instance.getActiveAccount() ?? accounts[0]
+            await createApiClient(instance, account)('/api/usuarios', {
                 method: 'POST',
-                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(nuevoUsuario),
             })
-            if (!response.ok) throw new Error(`Error HTTP ${response.status}`)
             setNuevoUsuario({ nombre: '', email: '', rol: 'ADMIN', empresaId: null })
             setMostrarFormulario(false)
             await cargarUsuarios()

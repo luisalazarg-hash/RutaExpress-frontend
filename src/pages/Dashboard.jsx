@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useMsal } from '@azure/msal-react'
 import './Dashboard.css'
 import { DashboardNav } from '../components/DashboardNav'
+import { createApiClient } from '../api/apiClient'
 
 const STATUS_COLORS = { CREADO: '#6c757d', ACEPTADO: '#0d6efd', EN_BODEGA: '#198754', EN_RUTA: '#fd7e14', ENTREGADO: '#20c997', CANCELADO: '#dc3545' }
 const ROLE_LABELS = { ADMIN: 'Administrador', OPERADOR: 'Despachador', CLIENTE: 'Cliente' }
@@ -25,11 +26,7 @@ export const Dashboard = () => {
     let active = true
     const loadShipments = async () => {
       try {
-        const scopes = [import.meta.env.VITE_AZURE_API_SCOPE].filter(Boolean)
-        const token = await instance.acquireTokenSilent({ scopes, account })
-        const response = await fetch(`${import.meta.env.VITE_API_URL ?? 'http://localhost:8080'}/api/shipments`, { headers: { Authorization: `Bearer ${token.accessToken}` } })
-        if (!response.ok) throw new Error(`La API respondió ${response.status}`)
-        const data = await response.json()
+        const data = await createApiClient(instance, account)('/api/shipments')
         if (active) setShipments(Array.isArray(data) ? data : [])
       } catch (requestError) {
         if (active) setError('No fue posible cargar los envíos desde la API.')

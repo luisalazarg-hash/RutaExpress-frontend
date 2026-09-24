@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { InteractionRequiredAuthError } from '@azure/msal-browser'
 import { useIsAuthenticated, useMsal } from '@azure/msal-react'
 import { apiTokenRequest } from './authRequest'
+import { createApiClient } from '../api/apiClient'
 
 const AuthContext = createContext(null)
 
@@ -39,24 +40,17 @@ export function AuthProvider({ children }) {
           account,
         })
 
-        const headers = {
-          Authorization: `Bearer ${tokenResponse.accessToken}`,
-        }
-
+        const request = createApiClient(instance, account)
+        let data
         let response = await fetch(
-          'http://localhost:8088/api/auth/me',
-          { method: 'GET', headers }
+          `${import.meta.env.VITE_API_URL ?? 'http://localhost:8080'}/api/auth/me`,
+          { headers: { Authorization: `Bearer ${tokenResponse.accessToken}` } }
         )
-
-        let data = await response.json()
+        data = await response.json()
 
         if (response.status === 403) {
-          response = await fetch(
-            'http://localhost:8088/api/auth/vincular',
-            { method: 'POST', headers }
-          )
-
-          data = await response.json()
+          data = await request('/api/auth/vincular', { method: 'POST' })
+          response = { ok: true }
         }
 
         if (!response.ok) {
