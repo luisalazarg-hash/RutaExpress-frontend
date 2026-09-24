@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8088'
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
 
 export function createApiClient(instance, account) {
   async function getToken() {
