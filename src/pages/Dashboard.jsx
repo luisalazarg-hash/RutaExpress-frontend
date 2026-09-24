@@ -20,22 +20,30 @@ export const Dashboard = () => {
   const account = instance.getAllAccounts?.()[0]
   const role = getRole(account)
   const [shipments, setShipments] = useState([])
+  const [catalog, setCatalog] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   useEffect(() => {
     let active = true
-    const loadShipments = async () => {
+    const loadDashboardData = async () => {
       try {
-        const data = await createApiClient(instance, account)('/api/shipments')
-        if (active) setShipments(Array.isArray(data) ? data : [])
+        const request = createApiClient(instance, account)
+        const [shipmentsData, catalogData] = await Promise.all([
+          request('/api/shipments'),
+          request('/api/catalog'),
+        ])
+        if (active) {
+          setShipments(Array.isArray(shipmentsData) ? shipmentsData : [])
+          setCatalog(Array.isArray(catalogData) ? catalogData : [])
+        }
       } catch (requestError) {
-        if (active) setError('No fue posible cargar los envíos desde la API.')
-        console.error('Error cargando envíos:', requestError)
+        if (active) setError('No fue posible cargar los datos del dashboard desde la API.')
+        console.error('Error cargando datos del dashboard:', requestError)
       } finally {
         if (active) setLoading(false)
       }
     }
-    loadShipments()
+    loadDashboardData()
     return () => { active = false }
   }, [account, instance])
 
@@ -151,6 +159,78 @@ export const Dashboard = () => {
                     <strong>{state.value}</strong>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            <div className="dashboard-panel">
+              <div className="panel-header">
+                <h3>Datos de envíos</h3>
+                <span>{shipments.length} registros</span>
+              </div>
+
+              <div className="table-responsive">
+                <table className="table table-striped align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Producto</th>
+                      <th>Destinatario</th>
+                      <th>Estado</th>
+                      <th>Creado</th>
+                      <th>Actualizado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shipments.map((shipment) => (
+                      <tr key={shipment.id}>
+                        <td>{shipment.id}</td>
+                        <td>{shipment.productId ?? '-'}</td>
+                        <td>{shipment.recipientName ?? '-'}</td>
+                        <td>
+                          <span className={`status-pill status-${shipment.status?.toLowerCase()}`}>
+                            {shipment.status ?? '-'}
+                          </span>
+                        </td>
+                        <td>{formatDate(shipment.createdAt)}</td>
+                        <td>{formatDate(shipment.updatedAt)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="dashboard-panel">
+              <div className="panel-header">
+                <h3>Datos de catálogo</h3>
+                <span>{catalog.length} registros</span>
+              </div>
+
+              <div className="table-responsive">
+                <table className="table table-striped align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Descripción</th>
+                      <th>Precio</th>
+                      <th>Stock</th>
+                      <th>Activo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {catalog.map((product) => (
+                      <tr key={product.id}>
+                        <td>{product.id}</td>
+                        <td>{product.nombre ?? '-'}</td>
+                        <td>{product.descripcion ?? '-'}</td>
+                        <td>{product.precio ?? '-'}</td>
+                        <td>{product.stock ?? '-'}</td>
+                        <td>{product.activo ? 'Sí' : 'No'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </section>

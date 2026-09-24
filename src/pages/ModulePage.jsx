@@ -12,9 +12,19 @@ const MODULES = {
 }
 
 const COLUMN_LABELS = {
-  id: 'Id',
+  id: 'ID',
+  productId: 'Producto',
+  recipientName: 'Destinatario',
+  originAddress: 'Dirección de origen',
+  destinationAddress: 'Dirección de destino',
+  status: 'Estado',
+  createdAt: 'Creado',
+  updatedAt: 'Actualizado',
   nombre: 'Nombre',
   descripcion: 'Descripción',
+  precio: 'Precio',
+  stock: 'Stock',
+  activo: 'Activo',
   generadoEn: 'Fecha',
 }
 
@@ -34,6 +44,8 @@ export const ModulePage = ({ title, description }) => {
   const [error, setError] = useState('')
   const module = MODULES[title]
   const isReportes = title === 'Reportes'
+  const isShipments = title === 'Envíos'
+  const isCatalog = title === 'Catálogo'
 
   useEffect(() => {
     let active = true
@@ -71,7 +83,7 @@ export const ModulePage = ({ title, description }) => {
   return (
     <main className="dashboard-page">
       <div className="dashboard-shell">
-        <section className={`module-page-content${isReportes ? ' module-page-content-wide' : ''}`}>
+        <section className={`module-page-content${isReportes || isShipments || isCatalog ? ' module-page-content-wide' : ''}`}>
           <p className="dashboard-eyebrow">Módulo RutaExpress</p>
           <h1>{title}</h1>
           <p>{description}</p>
@@ -84,12 +96,11 @@ export const ModulePage = ({ title, description }) => {
                 <table className="table table-striped align-middle">
                 <thead><tr>
                   {columns.map((column) => <th key={column}>{displayColumn(column)}</th>)}
-                  {isReportes && <th>Acciones</th>}
                 </tr></thead>
                 <tbody>{records.map((record, index) => (
                   <tr key={record.id ?? index}>{columns.map((column) => (
                     <td key={column}>{column === 'id' ? index + 1 : displayValue(record[column], column)}</td>
-                  ))}{isReportes && <td className="report-actions-cell" />}</tr>
+                  ))}</tr>
                 ))}</tbody>
                 </table>
               </div>
