@@ -40,6 +40,13 @@ export function AuthProvider({ children }) {
           account,
         })
 
+        const payload = JSON.parse(
+          atob(tokenResponse.accessToken.split('.')[1])
+        )
+
+        const rolesEntra = payload.roles ?? []
+        const rolEntra = rolesEntra[0] ?? null
+
         const request = createApiClient(instance, account)
         let data
         let response = await fetch(
@@ -59,7 +66,11 @@ export function AuthProvider({ children }) {
           )
         }
 
-        setUsuario(data)
+        setUsuario({
+          ...data,
+          rolEntra,
+          rolesEntra,
+        })
       } catch (error) {
         if (error instanceof InteractionRequiredAuthError) {
           await instance.acquireTokenRedirect({
@@ -80,9 +91,17 @@ export function AuthProvider({ children }) {
     cargarUsuario()
   }, [isAuthenticated, instance, accounts])
 
+
+
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, usuario, cargandoUsuario, errorUsuario }}
+      value={{
+        isAuthenticated,
+        usuario,
+        cargandoUsuario,
+        errorUsuario,
+        rol: usuario?.rolEntra ?? null,
+      }}
     >
       {children}
     </AuthContext.Provider>
