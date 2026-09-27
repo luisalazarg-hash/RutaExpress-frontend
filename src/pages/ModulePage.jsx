@@ -11,8 +11,28 @@ const MODULES = {
   Reportes: { path: '/api/reports', empty: 'No hay reportes disponibles.' },
 }
 
-const displayValue = (value) => {
+const COLUMN_LABELS = {
+  id: 'ID',
+  productId: 'Producto',
+  recipientName: 'Destinatario',
+  originAddress: 'Dirección de origen',
+  destinationAddress: 'Dirección de destino',
+  status: 'Estado',
+  createdAt: 'Creado',
+  updatedAt: 'Actualizado',
+  nombre: 'Nombre',
+  descripcion: 'Descripción',
+  precio: 'Precio',
+  stock: 'Stock',
+  activo: 'Activo',
+  generadoEn: 'Fecha',
+}
+
+const displayColumn = (column) => COLUMN_LABELS[column] ?? column.charAt(0).toUpperCase() + column.slice(1)
+
+const displayValue = (value, column) => {
   if (value === null || value === undefined) return '-'
+  if (column === 'generadoEn') return String(value).slice(0, 10)
   if (typeof value === 'object') return JSON.stringify(value)
   return String(value)
 }
@@ -23,6 +43,9 @@ export const ModulePage = ({ title, description }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const module = MODULES[title]
+  const isReportes = title === 'Reportes'
+  const isShipments = title === 'Envíos'
+  const isCatalog = title === 'Catálogo'
 
   useEffect(() => {
     let active = true
@@ -60,7 +83,7 @@ export const ModulePage = ({ title, description }) => {
   return (
     <main className="dashboard-page">
       <div className="dashboard-shell">
-        <section className="module-page-content">
+        <section className={`module-page-content${isReportes || isShipments || isCatalog ? ' module-page-content-wide' : ''}`}>
           <p className="dashboard-eyebrow">Módulo RutaExpress</p>
           <h1>{title}</h1>
           <p>{description}</p>
@@ -68,13 +91,19 @@ export const ModulePage = ({ title, description }) => {
           {loading && <div className="dashboard-loading">Cargando datos...</div>}
           {!loading && !error && !records.length && <div className="dashboard-panel">{module.empty}</div>}
           {!loading && !error && records.length > 0 && (
-            <div className="dashboard-panel recent-table-wrap">
-              <table className="recent-table">
-                <thead><tr>{columns.map((column) => <th key={column}>{column}</th>)}</tr></thead>
+            <div className={isReportes ? '' : 'dashboard-panel'}>
+              <div className="table-responsive">
+                <table className="table table-striped align-middle">
+                <thead><tr>
+                  {columns.map((column) => <th key={column}>{displayColumn(column)}</th>)}
+                </tr></thead>
                 <tbody>{records.map((record, index) => (
-                  <tr key={record.id ?? index}>{columns.map((column) => <td key={column}>{displayValue(record[column])}</td>)}</tr>
+                  <tr key={record.id ?? index}>{columns.map((column) => (
+                    <td key={column}>{column === 'id' ? index + 1 : displayValue(record[column], column)}</td>
+                  ))}</tr>
                 ))}</tbody>
-              </table>
+                </table>
+              </div>
             </div>
           )}
         </section>
