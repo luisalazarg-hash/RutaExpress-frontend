@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useMsal } from '@azure/msal-react'
 import './Dashboard.css'
 import { DashboardNav } from '../components/DashboardNav'
+import { createApiClient } from '../api/apiClient'
+import { useAuth } from '../auth/AuthContext'
 
 const STATUS_COLORS = { CREADO: '#6c757d', ACEPTADO: '#0d6efd', EN_BODEGA: '#198754', EN_RUTA: '#fd7e14', ENTREGADO: '#20c997', CANCELADO: '#dc3545' }
 const ROLE_LABELS = { ADMIN: 'Administrador', DESPACHADOR: 'Despachador', OPERADOR: 'Despachador', CLIENTE: 'Cliente', AUDITOR: 'Auditor' }
@@ -11,37 +13,54 @@ const getRole = (account) => {
   if (roles.some((role) => ['Despachador', 'DESPACHADOR', 'Operador', 'OPERADOR'].includes(role))) return 'DESPACHADOR'
   if (roles.some((role) => ['Auditor', 'AUDITOR'].includes(role))) return 'AUDITOR'
   return 'CLIENTE'
+
+const ROLE_LABELS = {
+  ADMIN: 'Administrador',
+  DESPACHADOR: 'Despachador',
+  CLIENTE: 'Cliente',
+  AUDITOR: 'Auditor',
 }
+
 const formatDate = (value) => value ? new Intl.DateTimeFormat('es-CL', { dateStyle: 'medium' }).format(new Date(value)) : '-'
 const countStatuses = (shipments) => Object.keys(STATUS_COLORS).map((label) => ({ label, value: shipments.filter((shipment) => shipment.status === label).length, color: STATUS_COLORS[label] }))
 
 export const Dashboard = () => {
+
   const { instance } = useMsal()
+  const { rol } = useAuth()
   const account = instance.getAllAccounts?.()[0]
-  const role = getRole(account)
+  const role = rol
+
   const [shipments, setShipments] = useState([])
+  const [catalog, setCatalog] = useState([])
+  const [rabbitStatus, setRabbitStatus] = useState({ service: 'rabbitmq-admin', connected: false })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   useEffect(() => {
     let active = true
-    const loadShipments = async () => {
+    const loadDashboardData = async () => {
       try {
-        const scopes = [import.meta.env.VITE_AZURE_API_SCOPE].filter(Boolean)
-        const token = await instance.acquireTokenSilent({ scopes, account })
-        const response = await fetch(`${import.meta.env.VITE_API_URL ?? 'http://localhost:8081'}/api/shipments`, { headers: { Authorization: `Bearer ${token.accessToken}` } })
-        if (!response.ok) throw new Error(`La API respondió ${response.status}`)
-        const data = await response.json()
-        if (active) setShipments(Array.isArray(data) ? data : [])
+        const request = createApiClient(instance, account)
+        const [shipmentsData, catalogData, rabbitStatusData] = await Promise.all([
+          request('/api/shipments'),
+          request('/api/catalog'),
+          role === 'ADMIN' ? request('/api/rabbitmq/status') : Promise.resolve({ service: 'rabbitmq-admin', connected: false }),
+        ])
+        if (active) {
+          setShipments(Array.isArray(shipmentsData) ? shipmentsData : [])
+          setCatalog(Array.isArray(catalogData) ? catalogData : [])
+          setRabbitStatus(rabbitStatusData || { service: 'rabbitmq-admin', connected: false })
+        }
       } catch (requestError) {
-        if (active) setError('No fue posible cargar los envíos desde la API.')
-        console.error('Error cargando envíos:', requestError)
+        if (active) setError('No fue posible cargar los datos del dashboard desde la API.')
+        console.error('Error cargando datos del dashboard:', requestError)
       } finally {
         if (active) setLoading(false)
       }
     }
-    loadShipments()
+    loadDashboardData()
     return () => { active = false }
-  }, [account, instance])
+  }, [account, instance, role])
 
   const handleLogout = async () => {
     try {
@@ -136,6 +155,18 @@ export const Dashboard = () => {
               </div>
             </div>
 
+            <div className="dashboard-panel">
+              <div className="panel-header">
+                <h3>RabbitMQ</h3>
+                <span>{rabbitStatus.connected ? 'Conectado' : 'Sin conexión'}</span>
+              </div>
+
+              <div className="api-summary">
+                <strong>{rabbitStatus.connected ? 'Online' : 'Offline'}</strong>
+                <span>{rabbitStatus.service ?? 'rabbitmq-admin'}</span>
+              </div>
+            </div>
+
             <div className="dashboard-panel status-panel">
               <div className="panel-header">
                 <h3>Estados activos</h3>
@@ -158,10 +189,83 @@ export const Dashboard = () => {
                 ))}
               </div>
             </div>
+
+            <div className="dashboard-panel">
+              <div className="panel-header">
+                <h3>Datos de envíos</h3>
+                <span>{shipments.length} registros</span>
+              </div>
+
+              <div className="table-responsive">
+                <table className="table table-striped align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Producto</th>
+                      <th>Destinatario</th>
+                      <th>Estado</th>
+                      <th>Creado</th>
+                      <th>Actualizado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shipments.map((shipment) => (
+                      <tr key={shipment.id}>
+                        <td>{shipment.id}</td>
+                        <td>{shipment.productId ?? '-'}</td>
+                        <td>{shipment.recipientName ?? '-'}</td>
+                        <td>
+                          <span className={`status-pill status-${shipment.status?.toLowerCase()}`}>
+                            {shipment.status ?? '-'}
+                          </span>
+                        </td>
+                        <td>{formatDate(shipment.createdAt)}</td>
+                        <td>{formatDate(shipment.updatedAt)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="dashboard-panel">
+              <div className="panel-header">
+                <h3>Datos de catálogo</h3>
+                <span>{catalog.length} registros</span>
+              </div>
+
+              <div className="table-responsive">
+                <table className="table table-striped align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Descripción</th>
+                      <th>Precio</th>
+                      <th>Stock</th>
+                      <th>Activo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {catalog.map((product) => (
+                      <tr key={product.id}>
+                        <td>{product.id}</td>
+                        <td>{product.nombre ?? '-'}</td>
+                        <td>{product.descripcion ?? '-'}</td>
+                        <td>{product.precio ?? '-'}</td>
+                        <td>{product.stock ?? '-'}</td>
+                        <td>{product.activo ? 'Sí' : 'No'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </section>
         )}
 
         {!loading && false && role === 'OPERADOR' && (
+        {!loading && role === 'DESPACHADOR' && (
           <section className="dashboard-section">
             <div className="section-heading">
               <div>
