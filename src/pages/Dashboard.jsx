@@ -26,6 +26,7 @@ export const Dashboard = () => {
 
   const [shipments, setShipments] = useState([])
   const [catalog, setCatalog] = useState([])
+  const [rabbitStatus, setRabbitStatus] = useState({ service: 'rabbitmq-admin', connected: false })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   useEffect(() => {
@@ -33,13 +34,15 @@ export const Dashboard = () => {
     const loadDashboardData = async () => {
       try {
         const request = createApiClient(instance, account)
-        const [shipmentsData, catalogData] = await Promise.all([
+        const [shipmentsData, catalogData, rabbitStatusData] = await Promise.all([
           request('/api/shipments'),
           request('/api/catalog'),
+          role === 'ADMIN' ? request('/api/rabbitmq/status') : Promise.resolve({ service: 'rabbitmq-admin', connected: false }),
         ])
         if (active) {
           setShipments(Array.isArray(shipmentsData) ? shipmentsData : [])
           setCatalog(Array.isArray(catalogData) ? catalogData : [])
+          setRabbitStatus(rabbitStatusData || { service: 'rabbitmq-admin', connected: false })
         }
       } catch (requestError) {
         if (active) setError('No fue posible cargar los datos del dashboard desde la API.')
@@ -50,7 +53,7 @@ export const Dashboard = () => {
     }
     loadDashboardData()
     return () => { active = false }
-  }, [account, instance])
+  }, [account, instance, role])
 
   const handleLogout = async () => {
     try {
@@ -141,6 +144,18 @@ export const Dashboard = () => {
                 <p>
                   Envíos actualmente en proceso operativo según su estado real.
                 </p>
+              </div>
+            </div>
+
+            <div className="dashboard-panel">
+              <div className="panel-header">
+                <h3>RabbitMQ</h3>
+                <span>{rabbitStatus.connected ? 'Conectado' : 'Sin conexión'}</span>
+              </div>
+
+              <div className="api-summary">
+                <strong>{rabbitStatus.connected ? 'Online' : 'Offline'}</strong>
+                <span>{rabbitStatus.service ?? 'rabbitmq-admin'}</span>
               </div>
             </div>
 
