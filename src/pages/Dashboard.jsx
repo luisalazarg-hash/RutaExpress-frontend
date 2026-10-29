@@ -6,20 +6,7 @@ import { createApiClient } from '../api/apiClient'
 import { useAuth } from '../auth/AuthContext'
 
 const STATUS_COLORS = { CREADO: '#6c757d', ACEPTADO: '#0d6efd', EN_BODEGA: '#198754', EN_RUTA: '#fd7e14', ENTREGADO: '#20c997', CANCELADO: '#dc3545' }
-const ROLE_LABELS = { ADMIN: 'Administrador', DESPACHADOR: 'Despachador', OPERADOR: 'Despachador', CLIENTE: 'Cliente', AUDITOR: 'Auditor' }
-const getRole = (account) => {
-  const roles = account?.idTokenClaims?.roles ?? []
-  if (roles.some((role) => ['Admin', 'ADMIN'].includes(role))) return 'ADMIN'
-  if (roles.some((role) => ['Despachador', 'DESPACHADOR', 'Operador', 'OPERADOR'].includes(role))) return 'DESPACHADOR'
-  if (roles.some((role) => ['Auditor', 'AUDITOR'].includes(role))) return 'AUDITOR'
-  return 'CLIENTE'
-
-const ROLE_LABELS = {
-  ADMIN: 'Administrador',
-  DESPACHADOR: 'Despachador',
-  CLIENTE: 'Cliente',
-  AUDITOR: 'Auditor',
-}
+const ROLE_LABELS = { ADMIN: 'Administrador', DESPACHADOR: 'Despachador', CLIENTE: 'Cliente', AUDITOR: 'Auditor' }
 
 const formatDate = (value) => value ? new Intl.DateTimeFormat('es-CL', { dateStyle: 'medium' }).format(new Date(value)) : '-'
 const countStatuses = (shipments) => Object.keys(STATUS_COLORS).map((label) => ({ label, value: shipments.filter((shipment) => shipment.status === label).length, color: STATUS_COLORS[label] }))
@@ -264,7 +251,6 @@ export const Dashboard = () => {
           </section>
         )}
 
-        {!loading && false && role === 'OPERADOR' && (
         {!loading && role === 'DESPACHADOR' && (
           <section className="dashboard-section">
             <div className="section-heading">

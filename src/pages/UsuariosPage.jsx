@@ -10,7 +10,8 @@ export function UsuariosPage() {
     const [error, setError] = useState(null)
 
     const [mostrarFormulario, setMostrarFormulario] = useState(false)
-    const [nuevoUsuario, setNuevoUsuario] = useState({ nombre: '', email: '', rol: 'ADMIN', empresaId: null })
+    const [nuevoUsuario, setNuevoUsuario] = useState({ nombre: '', email: '', rol: 'CLIENTE', empresaId: null })
+    const [empresas, setEmpresas] = useState([])
 
     async function cargarUsuarios() {
         try {
@@ -19,7 +20,9 @@ export function UsuariosPage() {
 
             const account = instance.getActiveAccount() ?? accounts[0]
             const data = await createApiClient(instance, account)('/api/usuarios')
+            const empresasData = await createApiClient(instance, account)('/api/auth/companies')
             setUsuarios(data)
+            setEmpresas(empresasData.filter((empresa) => empresa.activa !== false))
         } catch (error) {
             console.error(error)
             setError(error.message)
@@ -65,13 +68,20 @@ export function UsuariosPage() {
 
     async function crearUsuario(e) {
         e.preventDefault()
+        if (nuevoUsuario.rol !== 'ADMIN' && !nuevoUsuario.empresaId) {
+            alert('Selecciona una empresa para este rol.')
+            return
+        }
         try {
             const account = instance.getActiveAccount() ?? accounts[0]
             await createApiClient(instance, account)('/api/usuarios', {
                 method: 'POST',
-                body: JSON.stringify(nuevoUsuario),
+                body: JSON.stringify({
+                    ...nuevoUsuario,
+                    empresaId: nuevoUsuario.rol === 'ADMIN' ? null : Number(nuevoUsuario.empresaId),
+                }),
             })
-            setNuevoUsuario({ nombre: '', email: '', rol: 'ADMIN', empresaId: null })
+            setNuevoUsuario({ nombre: '', email: '', rol: 'CLIENTE', empresaId: null })
             setMostrarFormulario(false)
             await cargarUsuarios()
         } catch (error) {
@@ -97,9 +107,22 @@ export function UsuariosPage() {
                             onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, email: e.target.value })} required />
 
                         <select className="form-select mb-3" value={nuevoUsuario.rol}
-                            onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, rol: e.target.value })}>
+                            onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, rol: e.target.value, empresaId: e.target.value === 'ADMIN' ? null : nuevoUsuario.empresaId })}>
                             <option value="ADMIN">ADMIN</option>
+                            <option value="DESPACHADOR">DESPACHADOR</option>
+                            <option value="CLIENTE">CLIENTE</option>
+                            <option value="AUDITOR">AUDITOR</option>
                         </select>
+
+                        {nuevoUsuario.rol !== 'ADMIN' && (
+                            <select className="form-select mb-3" value={nuevoUsuario.empresaId ?? ''}
+                                onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, empresaId: Number(e.target.value) })} required>
+                                <option value="">Selecciona una empresa</option>
+                                {empresas.map((empresa) => (
+                                    <option key={empresa.id} value={empresa.id}>{empresa.nombre}</option>
+                                ))}
+                            </select>
+                        )}
 
                         <button className="btn btn-success" type="submit">Guardar usuario</button>
                     </form>
