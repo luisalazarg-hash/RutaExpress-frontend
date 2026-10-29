@@ -24,7 +24,6 @@ export function App() {
         }
       >
         <Route path="/dashboard" element={<Dashboard />} />
-
         <Route
           path="/usuarios"
           element={
@@ -33,65 +32,25 @@ export function App() {
             </RoleRoute>
           }
         />
-
         <Route
           path="/auditoria"
-          element={
-            <RoleRoute allowedRoles={['ADMIN', 'AUDITOR']}>
-              <ModulePage
-                title="Auditoría"
-                description="Consulta el historial de eventos y cambios de los envíos."
-              />
-            </RoleRoute>
-          }
+          element={<RoleRoute allowedRoles={['ADMIN', 'AUDITOR']}><ModulePage title="Auditoría" description="Consulta el historial de eventos y cambios de los envíos." /></RoleRoute>}
         />
-
         <Route
           path="/catalogo"
-          element={
-            <RoleRoute allowedRoles={['ADMIN', 'DESPACHADOR']}>
-              <ModulePage
-                title="Catálogo"
-                description="Administra los servicios disponibles para tus envíos."
-              />
-            </RoleRoute>
-          }
+          element={<RoleRoute allowedRoles={['ADMIN', 'DESPACHADOR']}><ModulePage title="Catálogo" description="Administra los servicios disponibles para tus envíos." /></RoleRoute>}
         />
-
         <Route
           path="/envios"
-          element={
-            <RoleRoute allowedRoles={['ADMIN', 'DESPACHADOR', 'CLIENTE']}>
-              <ModulePage
-                title="Envíos"
-                description="Consulta y gestiona el estado de los envíos."
-              />
-            </RoleRoute>
-          }
+          element={<RoleRoute allowedRoles={['ADMIN', 'DESPACHADOR', 'CLIENTE']}><ModulePage title="Envíos" description="Consulta y gestiona el estado de los envíos." /></RoleRoute>}
         />
-
         <Route
           path="/notificaciones"
-          element={
-            <RoleRoute allowedRoles={['ADMIN', 'DESPACHADOR', 'CLIENTE']}>
-              <ModulePage
-                title="Notificaciones"
-                description="Revisa las comunicaciones generadas por la operación."
-              />
-            </RoleRoute>
-          }
+          element={<RoleRoute allowedRoles={['ADMIN', 'DESPACHADOR', 'CLIENTE']}><ModulePage title="Notificaciones" description="Revisa las comunicaciones generadas por la operación." /></RoleRoute>}
         />
-
         <Route
           path="/reportes"
-          element={
-            <RoleRoute allowedRoles={['ADMIN']}>
-              <ModulePage
-                title="Reportes"
-                description="Accede a los informes operativos de RutaExpress."
-              />
-            </RoleRoute>
-          }
+          element={<RoleRoute allowedRoles={['ADMIN']}><ModulePage title="Reportes" description="Accede a los informes operativos de RutaExpress." /></RoleRoute>}
         />
       </Route>
     </Routes>
