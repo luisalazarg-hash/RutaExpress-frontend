@@ -4,11 +4,12 @@ import './Dashboard.css'
 import { DashboardNav } from '../components/DashboardNav'
 
 const STATUS_COLORS = { CREADO: '#6c757d', ACEPTADO: '#0d6efd', EN_BODEGA: '#198754', EN_RUTA: '#fd7e14', ENTREGADO: '#20c997', CANCELADO: '#dc3545' }
-const ROLE_LABELS = { ADMIN: 'Administrador', OPERADOR: 'Despachador', CLIENTE: 'Cliente' }
+const ROLE_LABELS = { ADMIN: 'Administrador', DESPACHADOR: 'Despachador', OPERADOR: 'Despachador', CLIENTE: 'Cliente', AUDITOR: 'Auditor' }
 const getRole = (account) => {
   const roles = account?.idTokenClaims?.roles ?? []
   if (roles.some((role) => ['Admin', 'ADMIN'].includes(role))) return 'ADMIN'
-  if (roles.some((role) => ['Operador', 'OPERADOR'].includes(role))) return 'OPERADOR'
+  if (roles.some((role) => ['Despachador', 'DESPACHADOR', 'Operador', 'OPERADOR'].includes(role))) return 'DESPACHADOR'
+  if (roles.some((role) => ['Auditor', 'AUDITOR'].includes(role))) return 'AUDITOR'
   return 'CLIENTE'
 }
 const formatDate = (value) => value ? new Intl.DateTimeFormat('es-CL', { dateStyle: 'medium' }).format(new Date(value)) : '-'
@@ -61,7 +62,7 @@ export const Dashboard = () => {
   return (
     <div className="dashboard-page">
       <div className="dashboard-shell">
-        <DashboardNav />
+        <DashboardNav isAdmin={role === 'ADMIN'} />
         <header className="dashboard-header">
           <div>
             <p className="dashboard-eyebrow">Panel de control</p>
@@ -160,7 +161,7 @@ export const Dashboard = () => {
           </section>
         )}
 
-        {!loading && role === 'OPERADOR' && (
+        {!loading && false && role === 'OPERADOR' && (
           <section className="dashboard-section">
             <div className="section-heading">
               <div>

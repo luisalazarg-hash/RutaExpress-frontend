@@ -8,19 +8,21 @@ const navigationItems = [
   { label: 'Reportes', path: '/reportes' },
 ]
 
-export const DashboardNav = () => (
+export const DashboardNav = ({ isAdmin = false }) => (
   <nav className="dashboard-nav" aria-label="Módulos de RutaExpress">
     <Link className="dashboard-nav-brand" to="/dashboard">RutaExpress</Link>
     <div className="dashboard-nav-links">
-      {navigationItems.map((item) => (
-        <NavLink
-          key={item.path}
-          to={item.path}
-          className={({ isActive }) => `dashboard-nav-link ${isActive ? 'active' : ''}`}
-        >
-          {item.label}
-        </NavLink>
-      ))}
+      {isAdmin
+        ? [{ label: 'Usuarios', path: '/usuarios' }, ...navigationItems]
+        : navigationItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            className={({ isActive }) => `dashboard-nav-link ${isActive ? 'active' : ''}`}
+          >
+            {item.label}
+          </NavLink>
+        ))}
     </div>
   </nav>
 )
