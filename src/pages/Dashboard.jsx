@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMsal } from '@azure/msal-react'
 import './Dashboard.css'
-import { DashboardNav } from '../components/DashboardNav'
 import { createApiClient } from '../api/apiClient'
 import { useAuth } from '../auth/AuthContext'
 
@@ -68,7 +67,6 @@ export const Dashboard = () => {
   return (
     <div className="dashboard-page">
       <div className="dashboard-shell">
-        <DashboardNav isAdmin={role === 'ADMIN'} />
         <header className="dashboard-header">
           <div>
             <p className="dashboard-eyebrow">Panel de control</p>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMsal } from '@azure/msal-react'
 import { Navigate } from 'react-router-dom'
-import { DashboardNav } from '../components/DashboardNav'
 import './Dashboard.css'
 
 const ROLES = {
@@ -125,7 +124,6 @@ export const UsersPage = () => {
   return (
     <div className="dashboard-page">
       <div className="dashboard-shell">
-        <DashboardNav isAdmin />
         <header className="dashboard-header">
           <div>
             <p className="dashboard-eyebrow">Administración</p>

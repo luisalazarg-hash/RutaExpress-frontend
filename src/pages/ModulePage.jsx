@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useMsal } from '@azure/msal-react'
-import { DashboardNav } from '../components/DashboardNav'
 import { createApiClient } from '../api/apiClient'
 
 const MODULES = {

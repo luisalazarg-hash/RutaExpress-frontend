@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router-dom'
-import { AppNavBar } from '../components/AppNavBar'
 import { DashboardNav } from '../components/DashboardNav'
 
 export const AppLayout = () => {
