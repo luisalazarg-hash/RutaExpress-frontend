@@ -6,6 +6,11 @@ import { createApiClient } from '../api/apiClient'
 
 const AuthContext = createContext(null)
 
+const normalizeApiBaseUrl = (baseUrl = 'http://localhost:8080') => {
+  if (!baseUrl) return 'http://localhost:8080'
+  return baseUrl.replace(/\/+$/, '').replace(/\/api$/, '')
+}
+
 export function AuthProvider({ children }) {
   const { instance, accounts } = useMsal()
   const isAuthenticated = useIsAuthenticated()

@@ -1,4 +1,10 @@
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
+const normalizeApiBaseUrl = (baseUrl = '') => {
+  if (!baseUrl) return ''
+  const trimmed = baseUrl.replace(/\/+$/, '')
+  return trimmed.endsWith('/api') ? trimmed.replace(/\/api$/, '') : trimmed
+}
+
+const API_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_URL)
 
 export function createApiClient(instance, account) {
   async function getToken() {
@@ -13,7 +19,8 @@ export function createApiClient(instance, account) {
     headers.set('Authorization', `Bearer ${token}`)
     if (options.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json')
 
-    const response = await fetch(`${API_URL}${path}`, { ...options, headers })
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`
+    const response = await fetch(`${API_URL}${normalizedPath}`, { ...options, headers })
     if (!response.ok) throw new Error(`La API respondió ${response.status}`)
     if (response.status === 204) return null
     return response.json()
